@@ -7,8 +7,7 @@ axios.defaults.validateStatus = () => {
   return true;
 };
 
-let accounDao = new AccountDAOMemory();
-let signup = new Signup(accounDao);
+let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {

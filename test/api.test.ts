@@ -4,27 +4,29 @@ axios.defaults.validateStatus = () => {
   return true;
 };
 
-test("Deve criar uma nova conta do passageiro", async () => {
+test("Should create a new passenger account", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
     cpf: "97456321558",
     password: "123456",
     isPassenger: true,
-  }
+  };
   const response = await axios.post("http://localhost:3000/signup", input);
   const responseData = response.data;
   expect(responseData.accountId).toBeDefined();
-  const responseGet = await axios.get(`http://localhost:3000/accounts/${responseData.accountId}`)
-  const respondeGetData = responseGet.data;
-  expect(respondeGetData.name).toBe(input.name);
-  expect(respondeGetData.email).toBe(input.email);
-  expect(respondeGetData.cpf).toBe(input.cpf);
-  expect(respondeGetData.password).toBe(input.password);
-  expect(respondeGetData.is_passenger).toBe(input.isPassenger);
+  const responseGet = await axios.get(
+    `http://localhost:3000/accounts/${responseData.accountId}`
+  );
+  const responseGetData = responseGet.data;
+  expect(responseGetData.name).toBe(input.name);
+  expect(responseGetData.email).toBe(input.email);
+  expect(responseGetData.cpf).toBe(input.cpf);
+  expect(responseGetData.password).toBe(input.password);
+  expect(responseGetData.is_passenger).toBe(input.isPassenger);
 });
 
-test("Nao deve criar uma nova conta de passageiro duplicado", async () => {
+test("Should not create a duplicate passenger account", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -35,10 +37,10 @@ test("Nao deve criar uma nova conta de passageiro duplicado", async () => {
   await axios.post("http://localhost:3000/signup", input);
   const response = await axios.post("http://localhost:3000/signup", input);
   const responseData = response.data;
-  expect(responseData.message).toBe("Account already exists"); 
+  expect(responseData.message).toBe("Account already exists");
 });
 
-test("Nao deve criar uma nova conta do passageiro com nome invalido", async () => {
+test("Should not create a new passenger account with an invalid name", async () => {
   const input = {
     name: "John", // Too short
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -51,7 +53,7 @@ test("Nao deve criar uma nova conta do passageiro com nome invalido", async () =
   expect(responseData.message).toBe("Invalid name");
 });
 
-test("Nao deve criar uma nova conta do passageiro com email invalido", async () => {
+test("Should not create a new passenger account with an invalid email", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}gmail.com`, // Without '@'
@@ -64,7 +66,7 @@ test("Nao deve criar uma nova conta do passageiro com email invalido", async () 
   expect(responseData.message).toBe("Invalid email");
 });
 
-test("Nao deve criar uma nova conta do passageiro com cpf invalido", async () => {
+test("Should not create a new passenger account with an invalid CPF", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -77,17 +79,16 @@ test("Nao deve criar uma nova conta do passageiro com cpf invalido", async () =>
   expect(responseData.message).toBe("Invalid cpf");
 });
 
-test("Nao deve criar uma nova conta do motorista com placa invalida", async () => {
+test("Should not create a new driver account with an invalid car plate", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
     cpf: "97456321558",
     password: "123456",
     isDriver: true,
-    carPlate: "AAA999" // Invalid size
+    carPlate: "AAA999", // Invalid size
   };
   const response = await axios.post("http://localhost:3000/signup", input);
   const responseData = response.data;
-  expect(responseData.message).toBe("Invalid car plate"); 
+  expect(responseData.message).toBe("Invalid car plate");
 });
-

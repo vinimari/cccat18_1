@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Signup } from "../src/Signup";
+import { Signup } from "../src/Signup";
 import { AccountDAOMemory } from "../src/AccountDAO";
 import { GetAccount } from "../src/GetAccount";
 
@@ -11,12 +11,12 @@ let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-  const accounDao = new AccountDAOMemory;
-  signup = new Signup(accounDao);
-  getAccount = new GetAccount(accounDao);
-})
+  const accountDao = new AccountDAOMemory();
+  signup = new Signup(accountDao);
+  getAccount = new GetAccount(accountDao);
+});
 
-test("Deve criar uma nova conta do passageiro", async () => {
+test("Should create a new passenger account", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -34,7 +34,7 @@ test("Deve criar uma nova conta do passageiro", async () => {
   expect(responseGet.is_passenger).toBe(input.isPassenger);
 });
 
-test("Nao deve criar uma nova conta de passageiro duplicado", async () => {
+test("Should not create a duplicate passenger account", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -48,7 +48,7 @@ test("Nao deve criar uma nova conta de passageiro duplicado", async () => {
   );
 });
 
-test("Nao deve criar uma nova conta do passageiro com nome invalido", async () => {
+test("Should not create a new passenger account with an invalid name", async () => {
   const input = {
     name: "John", // Too short
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -61,7 +61,7 @@ test("Nao deve criar uma nova conta do passageiro com nome invalido", async () =
   );
 });
 
-test("Nao deve criar uma nova conta do passageiro com email invalido", async () => {
+test("Should not create a new passenger account with an invalid email", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}gmail.com`, // Without '@'
@@ -74,7 +74,7 @@ test("Nao deve criar uma nova conta do passageiro com email invalido", async () 
   );
 });
 
-test("Nao deve criar uma nova conta do passageiro com cpf invalido", async () => {
+test("Should not create a new passenger account with an invalid CPF", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,
@@ -87,7 +87,7 @@ test("Nao deve criar uma nova conta do passageiro com cpf invalido", async () =>
   );
 });
 
-test("Nao deve criar uma nova conta do motorista com placa invalida", async () => {
+test("Should not create a new driver account with an invalid car plate", async () => {
   const input = {
     name: "John Doe",
     email: `johnDoe${Math.random()}@gmail.com`,

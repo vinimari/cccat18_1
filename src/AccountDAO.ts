@@ -63,9 +63,9 @@ export class AccountDAOMemory implements IAccountDAO {
   }
 
   normalizeAccount(account: any) {
-    const normalAccount = {...account}; 
+    const normalAccount = { ...account };
     normalAccount.is_passenger = account.isPassenger;
     delete normalAccount.isPassenger;
-    return normalAccount; 
+    return normalAccount;
   }
 }

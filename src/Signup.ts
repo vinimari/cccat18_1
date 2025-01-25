@@ -1,10 +1,13 @@
 import crypto from "crypto";
 import { validateCpf } from "./validateCpf";
 import { AccountDAO } from "./AccountDAO";
+import { MailerGatewayMemory } from "./MailerGateway";
 
 export class Signup {
-  
-  constructor(private readonly accountDao: AccountDAO) {}
+  constructor(
+    private accountDao: AccountDAO,
+    private mailerGateway: MailerGatewayMemory
+  ) {}
 
   async execute(input: any) {
     input.id = crypto.randomUUID();
@@ -25,6 +28,7 @@ export class Signup {
       throw new Error("Invalid car plate");
     }
     await this.accountDao.saveAccount(input);
+    await this.mailerGateway.send(input.email, "Welcome!", "...");
     return {
       accountId: input.id,
     };

@@ -1,7 +1,9 @@
 import axios from "axios";
 import { Signup } from "../src/Signup";
-import { AccountDAOMemory } from "../src/AccountDAO";
+import { AccountDAO, AccountDAOMemory } from "../src/AccountDAO";
 import { GetAccount } from "../src/GetAccount";
+import sinon from "sinon";
+import { MailerGatewayMemory } from "../src/MailerGateway";
 
 axios.defaults.validateStatus = () => {
   return true;
@@ -12,7 +14,8 @@ let getAccount: GetAccount;
 
 beforeEach(() => {
   const accountDao = new AccountDAOMemory();
-  signup = new Signup(accountDao);
+  const mailerGateway = new MailerGatewayMemory();
+  signup = new Signup(accountDao, mailerGateway);
   getAccount = new GetAccount(accountDao);
 });
 
@@ -24,14 +27,54 @@ test("Should create a new passenger account", async () => {
     password: "123456",
     isPassenger: true,
   };
+
   const response = await signup.execute(input);
   expect(response.accountId).toBeDefined();
+
   const responseGet = await getAccount.execute(response.accountId);
   expect(responseGet.name).toBe(input.name);
   expect(responseGet.email).toBe(input.email);
   expect(responseGet.cpf).toBe(input.cpf);
   expect(responseGet.password).toBe(input.password);
   expect(responseGet.is_passenger).toBe(input.isPassenger);
+});
+
+// Spy
+test("Should send a email when a new passenger account is created (spy)", async () => {
+  const input = {
+    name: "John Doe",
+    email: `johnDoe${Math.random()}@gmail.com`,
+    cpf: "97456321558",
+    password: "123456",
+    isPassenger: true,
+  };
+
+  const mailerGatewaySpy = sinon.spy(MailerGatewayMemory.prototype, "send");
+  await signup.execute(input);
+
+  sinon.assert.calledOnce(mailerGatewaySpy);
+  sinon.assert.calledWith(mailerGatewaySpy, input.email, "Welcome!", "...");
+  mailerGatewaySpy.restore();
+});
+
+// Stub
+test("Should send a email when a new passenger account is created (stub)", async () => {
+  const mailerGatewayStub = sinon
+    .stub(MailerGatewayMemory.prototype, "send")
+    .resolves();
+  const input = {
+    name: "John Doe",
+    email: `johnDoe${Math.random()}@gmail.com`,
+    cpf: "97456321558",
+    password: "123456",
+    isPassenger: true,
+  };
+
+  await signup.execute(input);
+  
+  sinon.assert.calledOnce(mailerGatewayStub);
+  sinon.assert.calledWith(mailerGatewayStub, input.email, "Welcome!", "...");
+  mailerGatewayStub.restore();
 });
 
 test("Should not create a duplicate passenger account", async () => {
